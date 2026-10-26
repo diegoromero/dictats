@@ -506,9 +506,24 @@ const TIMINGS = [
 const $=id=>document.getElementById(id), audio=$('audio');
 let phrase=0, chosen=[0,0], range=null, loop=false, playing=false, raf=0;
 let rangeMode=false, rangeAnchor=null;
-let times=TIMINGS.map(rows=>rows.map(pair=>pair.slice()));
-try {const data=JSON.parse(localStorage.getItem('dictat-timings-v1'));if(validTimings(data))times=data;}catch{}
-function validTimings(data){return Array.isArray(data)&&data.length===4&&data.every((rows,i)=>Array.isArray(rows)&&rows.length===PHRASES[i].text.split(' ').length&&rows.every(pair=>Array.isArray(pair)&&pair.length===2&&pair.every(Number.isFinite)));}
+// Accept both normal [phrase][word][start/end] arrays and the accidentally
+// nested [phrase][phrase][word][start/end] structure in this file.
+function normalizeTimings(data){
+ if(!Array.isArray(data)||data.length!==PHRASES.length)return null;
+ const candidate=data.map((rows,i)=>{
+   if(!Array.isArray(rows))return null;
+   const expected=PHRASES[i].text.split(' ').length;
+   const words=rows.length===expected&&rows.every(pair=>Array.isArray(pair)&&pair.length===2&&!Array.isArray(pair[0]))?rows:rows[i];
+   if(!Array.isArray(words)||words.length!==expected)return null;
+   const pairs=words.map(pair=>Array.isArray(pair)&&pair.length===2?pair.map(Number):null);
+   return pairs.every(pair=>pair&&pair.every(Number.isFinite))?pairs:null;
+ });
+ return candidate.every(Boolean)?candidate:null;
+}
+let times=normalizeTimings(TIMINGS);
+if(!times)throw Error('Invalid TIMINGS structure');
+try {const stored=normalizeTimings(JSON.parse(localStorage.getItem('dictat-timings-v1')));if(stored)times=stored;}catch{}
+function validTimings(data){return normalizeTimings(data)!==null;}
 function persist(){try{localStorage.setItem('dictat-timings-v1',JSON.stringify(times));}catch{}}
 const words=i=>PHRASES[i].text.split(' ');
 function fmt(sec){sec=Math.max(0,sec||0);return `${Math.floor(sec/60)}:${String(Math.floor(sec%60)).padStart(2,'0')}.${String(Math.floor(sec*100)%100).padStart(2,'0')}`;}
@@ -531,11 +546,11 @@ $('repeat').onclick=()=>{loop=!loop;$('repeat').textContent=loop?'↻ Repeat on'
 $('speed').onchange=e=>audio.playbackRate=Number(e.target.value);
 $('seek').oninput=e=>{audio.currentTime=PHRASES[phrase].duration*e.target.value/1000;updateProgress();};
 audio.addEventListener('ended',()=>{playing=false;$('pause').textContent='▶ Resume';updateProgress();});
-function renderEditor(){const root=$('timingRows');root.replaceChildren();words(phrase).forEach((word,i)=>{const tr=document.createElement('tr');const name=document.createElement('td');name.textContent=word;tr.append(name);[0,1].forEach(j=>{const td=document.createElement('td'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=PHRASES[phrase].duration;inp.step='0.01';inp.value=times[phrase][i][j].toFixed(2);inp.onchange=()=>{const val=Number(inp.value);if(Number.isFinite(val)&&val>=0&&val<=PHRASES[phrase].duration){times[phrase][i][j]=val;persist();paint();}else inp.value=times[phrase][i][j].toFixed(2);};td.append(inp);tr.append(td);});const td=document.createElement('td'),b=document.createElement('button');b.className='btn small';b.textContent='▶';b.onclick=()=>{chosen=[i,i];paint();play(...selectionBounds());};td.append(b);tr.append(td);root.append(tr);});}
+function renderEditor(){const root=$('timingRows');root.replaceChildren();words(phrase).forEach((word,i)=>{const tr=document.createElement('tr');const name=document.createElement('td');name.textContent=word;tr.append(name);[0,1].forEach(j=>{const td=document.createElement('td'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=PHRASES[phrase].duration;inp.step='0.01';inp.value=Number(times[phrase][i][j]).toFixed(2);inp.onchange=()=>{const val=Number(inp.value);if(Number.isFinite(val)&&val>=0&&val<=PHRASES[phrase].duration){times[phrase][i][j]=val;persist();paint();}else inp.value=Number(times[phrase][i][j]).toFixed(2);};td.append(inp);tr.append(td);});const td=document.createElement('td'),b=document.createElement('button');b.className='btn small';b.textContent='▶';b.onclick=()=>{chosen=[i,i];paint();play(...selectionBounds());};td.append(b);tr.append(td);root.append(tr);});}
 $('toggleEditor').onclick=()=>{const hidden=$('editorArea').classList.toggle('hidden');$('toggleEditor').textContent=hidden?'Show editor':'Hide editor';};
-$('resetTimings').onclick=()=>{if(confirm('Reset estimated timings for this phrase?')){times[phrase]=TIMINGS[phrase].map(row=>row.slice());persist();renderEditor();}};
+$('resetTimings').onclick=()=>{if(confirm('Reset to the timings saved in this HTML for this phrase?')){times[phrase]=normalizeTimings(TIMINGS)[phrase].map(row=>row.slice());persist();renderEditor();}};
 $('exportTimings').onclick=async()=>{const value=JSON.stringify(times,null,2);try{await navigator.clipboard.writeText(value);alert('Copied timings JSON.');}catch{prompt('Copy timings JSON:',value);}};
-$('importTimings').onclick=()=>{const raw=prompt('Paste all four phrase timing arrays as JSON:');if(!raw)return;try{const data=JSON.parse(raw);if(!validTimings(data))throw Error('Incorrect array shape');times=data;persist();renderEditor();paint();}catch(e){alert('Invalid timings: '+e.message);}};
+$('importTimings').onclick=()=>{const raw=prompt('Paste all four phrase timing arrays as JSON:');if(!raw)return;try{const data=normalizeTimings(JSON.parse(raw));if(!data)throw Error('Incorrect array shape');times=data;persist();renderEditor();paint();}catch(e){alert('Invalid timings: '+e.message);}};
 document.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||e.altKey||e.ctrlKey||e.metaKey)return;if(e.code==='Space'){e.preventDefault();$('pause').click();}else if(e.key==='Enter'){e.preventDefault();$('playSelection').click();}else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();const next=Math.max(0,Math.min(words(phrase).length-1,chosen[0]+(e.key==='ArrowRight'?1:-1)));chosen=[next,next];paint();}});
 setPhrase(0);
 </script></body></html>
