@@ -29,7 +29,7 @@
    <input id="seek" class="timeline" type="range" min="0" max="1000" value="0" aria-label="Seek through recording" />
    <div class="timing"><span id="currentTime">0:00.00</span><span id="endTime">0:00.00</span></div>
  </section>
- <section style="display: none;" class="card"><div class="edithead"><div><strong>Word timing editor</strong><div class="muted">Optional: fix approximate word positions in seconds.</div></div><button class="btn small" id="toggleEditor">Show editor</button></div>
+ <section class="card"><div class="edithead"><div><strong>Word timing editor</strong><div class="muted">Optional: fix approximate word positions in seconds.</div></div><button class="btn small" id="toggleEditor">Show editor</button></div>
    <div id="editorArea" class="editor hidden">
     <div class="row waveform-toolbar"><label for="waveZoom">Zoom</label><select id="waveZoom" class="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select><button id="previewWord" class="btn soft small">▶ Play selected word</button><span id="waveSelection" class="muted"></span></div>
     <p class="hint" id="waveHelp">Select a word below the waveform, then drag its green start and orange end handles. Click the waveform to seek. Zoom in for precision; scroll sideways to see more. Focus a handle and use ←/→ for 0.01 s steps (Shift: 0.1 s).</p>
