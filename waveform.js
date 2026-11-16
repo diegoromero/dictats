@@ -125,7 +125,7 @@ function syncWaveform(){
   handle.setAttribute('aria-valuetext',value.toFixed(2)+' seconds');
  });
  $('waveSelection').textContent=`${word} · ${start.toFixed(2)}–${end.toFixed(2)} s`;
- $('wavePlayhead').style.left=percent(audio.currentTime);
+ $('wavePlayhead').style.left=percent(playbackPosition());
 }
 
 function setWordBoundary(index,boundary,value){
@@ -144,7 +144,7 @@ function initWaveform(){
  $('previewWord').onclick=()=>{const [start,end]=times[phrase][chosen[0]];play(start,end);};
  $('waveCanvas').onclick=e=>{
   const rect=$('waveTrack').getBoundingClientRect();
-  stop();audio.currentTime=Math.max(0,Math.min(PHRASES[phrase].duration,(e.clientX-rect.left)/rect.width*PHRASES[phrase].duration));updateProgress();
+  stop();useFullRecording();audio.currentTime=Math.max(0,Math.min(PHRASES[phrase].duration,(e.clientX-rect.left)/rect.width*PHRASES[phrase].duration));updateProgress();
  };
  [$('waveStart'),$('waveEnd')].forEach((handle,boundary)=>{
   let drag=null;
