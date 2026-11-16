@@ -4,7 +4,7 @@ const waveCache=new Map();
 
 async function waveformAudioBytes(source){
  // Decode embedded recordings directly; file:// pages cannot fetch local files.
- if(source.startsWith('data:audio/ogg;base64,')){
+ if(/^data:audio\/[^;,]+;base64,/.test(source)){
   const binary=atob(source.slice(source.indexOf(',')+1));
   return Uint8Array.from(binary,char=>char.charCodeAt(0)).buffer;
  }
