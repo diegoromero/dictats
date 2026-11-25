@@ -1,44 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dictats · Parent audio player</title>
+<title>Dictats · Reproductor para familias</title>
 <style>
 :root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#203047;background:#f5f7fb}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}.wrap{max-width:920px;margin:0 auto;padding:30px 18px 70px}.head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.eyebrow{font-size:12px;letter-spacing:.13em;font-weight:750;color:#5573a4;text-transform:uppercase}h1{font-size:clamp(25px,4vw,37px);letter-spacing:-.045em;margin:5px 0}.sub{color:#718096;margin:0 0 24px}.pill{background:#e6efff;color:#375eb0;border-radius:99px;padding:9px 13px;font-size:12px;font-weight:700}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:15px}.tab{background:white;border:1px solid #dee5f0;border-radius:13px;padding:15px 10px;text-align:left;color:#63718a}.tab strong{display:block;color:#293e60;font-size:15px;margin-bottom:3px}.tab.active{border-color:#527bdc;background:#eaf0ff;box-shadow:inset 0 0 0 1px #527bdc}.card{background:white;border:1px solid #e2e8f1;box-shadow:0 10px 30px #18305a09;border-radius:20px;padding:24px;margin-bottom:15px}.sectionline{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.muted{color:#7b899c;font-size:13px}.sentence{font-size:clamp(23px,3.2vw,32px);line-height:2.05;margin:22px 0;min-height:110px}.word{background:#f1f5fa;color:#283b5b;border:2px solid transparent;border-radius:9px;padding:4px 7px;margin:3px 2px;white-space:nowrap}.word.active{background:#c5dcff;border-color:#537bd2}.word.selected{background:#fff0c0;border-color:#e9b848}.word.active.selected{background:#b8d9ec;border-color:#3b8ab8}.guide{font-size:13px;color:#7a879a;margin:0 0 18px}.toolbar,.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.btn{border-radius:11px;padding:11px 15px;border:1px solid #dce3ee;background:#fff;color:#344864;font-weight:650}.btn.primary{background:#315fc2;border-color:#315fc2;color:#fff}.btn.soft{background:#edf3ff;border-color:#dce8fe;color:#345da7}.btn.small{font-size:13px;padding:9px 11px}.btn.on{background:#e7f0ff;border-color:#6990eb;color:#315fc2}.controls{margin:16px 0}.speed{border:1px solid #dce3ee;border-radius:11px;background:white;padding:10px}.timeline{width:100%;accent-color:#386ad0;cursor:pointer}.timing{display:flex;justify-content:space-between;color:#7e8ba0;font-size:12px;font-variant-numeric:tabular-nums}.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.footnote{font-size:13px;line-height:1.6;color:#6c7d96}.edithead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.editor{margin-top:16px;overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}th{text-align:left;color:#7a8698;font-size:12px}td,th{padding:9px 8px;border-bottom:1px solid #edf0f5}td input{width:92px;max-width:100%;padding:8px;border:1px solid #dce3ed;border-radius:8px}.hint{font-size:12px;color:#7a8799}.hidden{display:none!important}details summary{cursor:pointer;font-weight:700;color:#344864}details[open] summary{margin-bottom:8px}kbd{border:1px solid #ccd5e3;border-bottom-width:2px;padding:2px 5px;border-radius:5px;background:#fff}@media(max-width:540px){.tabs{gap:5px}.tab{padding:11px 7px}.tab strong{font-size:13px}.tab span{font-size:11px}.card{padding:17px}.word{padding:3px 5px}.btn{padding:10px 11px}}
 </style>
 <link rel="stylesheet" href="waveform.css" />
 </head>
 <body><main class="wrap">
- <div class="head"><div><h1 id="dictationTitle">Dictat: Dies de la setmana</h1></div></div>
- <p class="sub">Control exactly what your daughter hears. Select a word or a range, then play or repeat it.</p>
- <div class="row" style="margin-bottom:20px"><label for="dictationSelect"><strong>Choose dictation</strong></label><select id="dictationSelect" class="speed"></select></div>
- <nav class="tabs" id="tabs" aria-label="Choose phrase"></nav>
+ <div class="head"><div><h1 lang="ca" id="dictationTitle">Dictat: Dies de la setmana</h1></div><div class="row"><label for="language" data-i18n="language">Idioma</label><select class="speed" id="language"><option value="es" lang="es">Español</option><option value="en" lang="en">English</option></select></div></div>
+ <p class="sub" data-i18n="intro">Elige qué escuchará tu hija. Selecciona una palabra o un grupo de palabras para escucharlas o repetirlas.</p>
+ <div class="row" style="margin-bottom:20px"><label for="dictationSelect"><strong data-i18n="choose">Elegir dictado</strong></label><select lang="ca" id="dictationSelect" class="speed"></select></div>
+ <nav class="tabs" id="tabs" data-i18n-label="choosePhrase" aria-label="Elegir frase"></nav>
  <section class="card">
-   <div class="sectionline"><strong id="phraseTitle">Phrase 1</strong><span class="muted" id="durationLabel"></span></div>
-   <div id="sentence" class="sentence" aria-label="Clickable words"></div>
-   <div class="row" style="margin-bottom:12px"><button id="rangeMode" class="btn small" aria-pressed="false">Select range: Off</button><span id="rangeHint" class="muted">Tap a word to select it.</span></div>
-   <p class="guide">For multiple words, turn on Select range, then tap the first and last words. Shift-click also works with a keyboard. Blue follows playback; yellow marks your selection.</p>
+   <div class="sectionline"><strong id="phraseTitle">Frase 1</strong><span class="muted" id="durationLabel"></span></div>
+   <div id="sentence" class="sentence" data-i18n-label="wordsLabel" aria-label="Palabras seleccionables"></div>
+   <div class="row" style="margin-bottom:12px"><button id="rangeMode" class="btn small" aria-pressed="false">Selección de intervalo desactivada</button><span id="rangeHint" class="muted">Pulsa una palabra para seleccionarla.</span></div>
+   <p class="guide" data-i18n="guide">Para seleccionar varias palabras, activa la selección de intervalo y pulsa la primera y la última. También puedes mantener pulsada Mayús al hacer clic. El azul indica la palabra que suena y el amarillo marca tu selección.</p>
    <div class="controls">
-     <button id="playAll" class="btn primary">▶ Entire phrase</button>
-     <button id="playSelection" class="btn soft">▶ Selection</button>
-     <button id="pause" class="btn">⏸ Pause</button>
-     <button id="repeat" class="btn">↻ Repeat off</button>
-     <select id="speed" class="speed" aria-label="Playback speed"><option value="0.65">0.65× slow</option><option value="0.75">0.75×</option><option value="0.85">0.85×</option><option value="1" selected>1× normal</option><option value="1.15">1.15×</option></select>
+     <button id="playAll" class="btn primary" data-i18n="entire">▶ Frase completa</button>
+     <button id="playSelection" class="btn soft" data-i18n="selection">▶ Selección</button>
+     <button id="pause" class="btn">⏸ Pausar</button>
+     <button id="repeat" class="btn">↻ Repetición desactivada</button>
+     <select id="speed" class="speed" data-i18n-label="speed" aria-label="Velocidad de reproducción"><option value="0.65" data-i18n="slow">0,65× lenta</option><option value="0.75" data-i18n="speed75">0,75×</option><option value="0.85" data-i18n="speed85">0,85×</option><option value="1" selected data-i18n="normal">1× normal</option><option value="1.15" data-i18n="speed115">1,15×</option></select>
    </div>
-   <input id="seek" class="timeline" type="range" min="0" max="1000" value="0" aria-label="Seek through recording" />
+   <input id="seek" class="timeline" type="range" min="0" max="1000" value="0" data-i18n-label="seek" aria-label="Desplazarse por la grabación" />
    <div class="timing"><span id="currentTime">0:00.00</span><span id="endTime">0:00.00</span></div>
  </section>
- <section class="card"><div class="edithead"><div><strong>Word timing editor</strong><div class="muted">Optional: fix approximate word positions in seconds.</div></div><button class="btn small" id="toggleEditor">Show editor</button></div>
+ <section class="card"><div class="edithead"><div><strong data-i18n="editor">Editor de tiempos por palabra</strong><div class="muted" data-i18n="editorHint">Si lo necesitas, ajusta en segundos el inicio y el final de cada palabra.</div></div><button class="btn small" id="toggleEditor">Mostrar editor</button></div>
    <div id="editorArea" class="editor hidden">
-    <div class="row waveform-toolbar"><label for="waveZoom">Zoom</label><select id="waveZoom" class="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select><button id="previewWord" class="btn soft small">▶ Play selected word</button><span id="waveSelection" class="muted"></span></div>
-    <p class="hint" id="waveHelp">Select a word below the waveform, then drag its green start and orange end handles. Click the waveform to seek. Zoom in for precision; scroll sideways to see more. Focus a handle and use ←/→ for 0.01 s steps (Shift: 0.1 s).</p>
+    <div class="row waveform-toolbar"><label for="waveZoom" data-i18n="zoom">Zoom</label><select id="waveZoom" class="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select><button id="previewWord" class="btn soft small" data-i18n="preview">▶ Escuchar la palabra seleccionada</button><span id="waveSelection" class="muted"></span></div>
+    <p class="hint" id="waveHelp" data-i18n="waveHelp">Selecciona una palabra bajo la onda y arrastra el marcador verde de inicio o el naranja de fin. Pulsa la onda para ir a ese punto. Amplía la vista para ajustar con precisión y desplázate horizontalmente para ver más. Con un marcador seleccionado, usa ←/→ para moverlo 0,01 s o Mayús + ←/→ para moverlo 0,1 s.</p>
     <p id="waveStatus" class="hint" role="status"></p>
-    <div id="waveScroll" class="wave-scroll"><div id="waveTrack" class="wave-track" aria-label="Audio waveform and word boundaries" aria-describedby="waveHelp"><canvas id="waveCanvas" aria-label="Audio amplitude waveform"></canvas><div id="waveRegions"></div><div id="wavePlayhead" class="wave-playhead" aria-hidden="true"></div><button id="waveStart" class="wave-handle start" role="slider" aria-label="Selected word start" aria-valuemin="0"><span>Start</span></button><button id="waveEnd" class="wave-handle end" role="slider" aria-label="Selected word end" aria-valuemin="0"><span>End</span></button></div></div>
-    <div class="row" style="margin:16px 0 12px"><button id="resetTimings" class="btn small">Reset phrase estimates</button><button id="exportTimings" class="btn small">Copy all timings as JSON</button><button id="importTimings" class="btn small">Import timings JSON</button></div><table><thead><tr><th>Word</th><th>Start (s)</th><th>End (s)</th><th></th></tr></thead><tbody id="timingRows"></tbody></table><p class="hint">Changes are saved in this browser's local storage. For exact cuts, allow a tiny margin around consonants.</p></div>
+    <div id="waveScroll" class="wave-scroll"><div id="waveTrack" class="wave-track" data-i18n-label="waveTrack" aria-label="Forma de onda y límites de las palabras" aria-describedby="waveHelp"><canvas id="waveCanvas" data-i18n-label="waveCanvas" aria-label="Forma de onda de la grabación"></canvas><div id="waveRegions"></div><div id="wavePlayhead" class="wave-playhead" aria-hidden="true"></div><button id="waveStart" class="wave-handle start" role="slider" aria-label="Inicio de la palabra seleccionada" aria-valuemin="0"><span data-i18n="start">Inicio</span></button><button id="waveEnd" class="wave-handle end" role="slider" aria-label="Fin de la palabra seleccionada" aria-valuemin="0"><span data-i18n="end">Fin</span></button></div></div>
+    <div class="row" style="margin:16px 0 12px"><button id="resetTimings" class="btn small" data-i18n="reset">Restablecer los tiempos de la frase</button><button id="exportTimings" class="btn small" data-i18n="copy">Copiar todos los tiempos en JSON</button><button id="importTimings" class="btn small" data-i18n="import">Importar tiempos en JSON</button></div><table><thead><tr><th data-i18n="word">Palabra</th><th data-i18n="startSeconds">Inicio (s)</th><th data-i18n="endSeconds">Fin (s)</th><th></th></tr></thead><tbody id="timingRows"></tbody></table><p class="hint" data-i18n="saveHint">Los cambios se guardan en este navegador. Para que los cortes sean precisos, deja un pequeño margen alrededor de las consonantes.</p></div>
  </section>
- <p class="footnote">Keyboard: <kbd>Space</kbd> pause/resume, <kbd>←</kbd>/<kbd>→</kbd> previous/next word, <kbd>Enter</kbd> play selection. Audio segments stop automatically and will not advance to another phrase.</p>
-</main><audio id="audio" preload="auto"></audio>
+ <p class="footnote" data-i18n-html="shortcuts">Atajos de teclado. <kbd>Espacio</kbd> para pausar o reanudar, <kbd>←</kbd>/<kbd>→</kbd> para elegir la palabra anterior o siguiente y <kbd>Enter</kbd> para reproducir la selección. Al terminar el fragmento, el audio se detiene sin pasar a la frase siguiente.</p>
+</main><audio lang="ca" id="audio" preload="auto"></audio>
+<script src="i18n.js"></script>
 <script src="waveform.js"></script>
 <script>
 // Keep the original recordings and timings intact.
@@ -708,13 +709,13 @@ function validTimings(data){return normalizeTimings(data)!==null;}
 function persist(){try{localStorage.setItem(dictation.storageKey,JSON.stringify(times));}catch{}}
 const words=i=>PHRASES[i].text.split(' ');
 function fmt(sec){sec=Math.max(0,sec||0);return `${Math.floor(sec/60)}:${String(Math.floor(sec%60)).padStart(2,'0')}.${String(Math.floor(sec*100)%100).padStart(2,'0')}`;}
-function stop(){playing=false;range=null;audio.pause();cancelAnimationFrame(raf);$('pause').textContent='▶ Resume';}
-function setPhrase(i){stop();releaseClip();audio.loop=false;phrase=i;chosen=[0,0];rangeAnchor=null;updateRangeHint();audio.src=PHRASES[i].audio;audio.load();audio.playbackRate=Number($('speed').value);$('phraseTitle').textContent='Phrase '+(i+1);$('durationLabel').textContent=`${words(i).length} words · ${fmt(PHRASES[i].duration)}`;$('endTime').textContent=fmt(PHRASES[i].duration);render();updateProgress();loadWaveform();}
-function updateRangeHint(){$('rangeMode').textContent=rangeMode?'Select range: On':'Select range: Off';$('rangeMode').classList.toggle('on',rangeMode);$('rangeMode').setAttribute('aria-pressed',String(rangeMode));$('rangeHint').textContent=!rangeMode?'Tap a word to select it.':rangeAnchor===null?'Tap the first word…':'Now tap the last word…';}
+function stop(){playing=false;range=null;audio.pause();cancelAnimationFrame(raf);$('pause').textContent=t('resume');}
+function setPhrase(i){stop();releaseClip();audio.loop=false;phrase=i;chosen=[0,0];rangeAnchor=null;updateRangeHint();audio.src=PHRASES[i].audio;audio.load();audio.playbackRate=Number($('speed').value);$('endTime').textContent=fmt(PHRASES[i].duration);render();updateProgress();loadWaveform();}
+function updateRangeHint(){$('rangeMode').textContent=t(rangeMode?'rangeOn':'rangeOff');$('rangeMode').classList.toggle('on',rangeMode);$('rangeMode').setAttribute('aria-pressed',String(rangeMode));$('rangeHint').textContent=t(!rangeMode?'tap':rangeAnchor===null?'first':'last');}
 function selectWord(i,shift){if(shift){chosen=[Math.min(chosen[0],i),Math.max(chosen[0],i)];rangeAnchor=null;}else if(rangeMode){if(rangeAnchor===null){rangeAnchor=i;chosen=[i,i];}else{chosen=[Math.min(rangeAnchor,i),Math.max(rangeAnchor,i)];rangeAnchor=null;}}else{chosen=[i,i];rangeAnchor=null;}updateRangeHint();paint();}
 $('rangeMode').onclick=()=>{rangeMode=!rangeMode;rangeAnchor=null;updateRangeHint();};
-function render(){ $('tabs').innerHTML=PHRASES.map((p,i)=>`<button class="tab ${i===phrase?'active':''}" data-phrase="${i}"><strong>Phrase ${i+1}</strong><span>${words(i).length} words</span></button>`).join('');$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>setPhrase(Number(b.dataset.phrase)));
- const root=$('sentence');root.replaceChildren();words(phrase).forEach((word,i)=>{const b=document.createElement('button');b.className='word';b.textContent=word;b.dataset.word=i;b.setAttribute('aria-label',`Select ${word}`);b.onclick=e=>selectWord(i,e.shiftKey);root.appendChild(b);root.append(' ');});paint();renderEditor();}
+function render(){ $('phraseTitle').textContent=t('phrase',{n:phrase+1});$('durationLabel').textContent=t('count',{n:words(phrase).length})+' · '+fmt(PHRASES[phrase].duration);$('tabs').innerHTML=PHRASES.map((p,i)=>`<button class="tab ${i===phrase?'active':''}" data-phrase="${i}"><strong>${t('phrase',{n:i+1})}</strong><span>${t('count',{n:words(i).length})}</span></button>`).join('');$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>setPhrase(Number(b.dataset.phrase)));
+ const root=$('sentence');root.replaceChildren();words(phrase).forEach((word,i)=>{const b=document.createElement('button');b.className='word';b.textContent=word;b.dataset.word=i;b.lang='ca';b.onclick=e=>selectWord(i,e.shiftKey);root.appendChild(b);root.append(' ');});paint();renderEditor();}
 function paint(){const position=playbackPosition();let active=-1;times[phrase].forEach(([a,b],i)=>{if(position>=a&&position<b)active=i;});$('sentence').querySelectorAll('.word').forEach((el,i)=>{el.classList.toggle('selected',i>=chosen[0]&&i<=chosen[1]);el.classList.toggle('active',active===i);});syncWaveform();}
 function selectionBounds(){const a=times[phrase][chosen[0]][0],b=times[phrase][chosen[1]][1];return [Math.max(0,a),Math.min(PHRASES[phrase].duration,b)];}
 let clipUrl=null, clipOffset=0, cachedRecording=null, cachedBytes=null;
@@ -756,27 +757,27 @@ async function play(from,to,wholePhrase=false){
   audio.src=next;releaseClip();clipUrl=next;clipOffset=from;
   audio.loop=loop;audio.playbackRate=Number($('speed').value);
  }
- playing=true;$('pause').textContent='⏸ Pause';
+ playing=true;$('pause').textContent=t('pause');
  try{await audio.play();}catch(e){
-  if(range===request&&playing){playing=false;$('pause').textContent='▶ Resume';alert('Could not play audio: '+e.message);}
+  if(range===request&&playing){playing=false;$('pause').textContent=t('resume');alert(t('audioError'));}
   return;
  }
  if(range===request&&playing)tick();
 }
-function tick(){cancelAnimationFrame(raf);const step=()=>{updateProgress();if(!playing)return;if(!clipUrl&&range&&audio.currentTime>=range.to-0.012){audio.pause();if(loop){audio.currentTime=range.from;audio.play().catch(()=>{});}else{playing=false;$('pause').textContent='▶ Resume';return;}}if(audio.ended){playing=false;return;}raf=requestAnimationFrame(step);};raf=requestAnimationFrame(step);}
+function tick(){cancelAnimationFrame(raf);const step=()=>{updateProgress();if(!playing)return;if(!clipUrl&&range&&audio.currentTime>=range.to-0.012){audio.pause();if(loop){audio.currentTime=range.from;audio.play().catch(()=>{});}else{playing=false;$('pause').textContent=t('resume');return;}}if(audio.ended){playing=false;return;}raf=requestAnimationFrame(step);};raf=requestAnimationFrame(step);}
 function updateProgress(){const dur=PHRASES[phrase].duration;$('seek').value=Math.min(1000,Math.round(1000*playbackPosition()/dur));$('currentTime').textContent=fmt(playbackPosition());paint();}
 $('playAll').onclick=()=>play(0,PHRASES[phrase].duration-0.03,true);
 $('playSelection').onclick=()=>play(...selectionBounds());
-$('pause').onclick=()=>{if(!playing){if(range&&playbackPosition()<range.to-0.05){playing=true;audio.play().then(tick).catch(()=>{});$('pause').textContent='⏸ Pause';}else play(...selectionBounds());}else{playing=false;audio.pause();$('pause').textContent='▶ Resume';}};
-$('repeat').onclick=()=>{loop=!loop;if(clipUrl)audio.loop=loop;$('repeat').textContent=loop?'↻ Repeat on':'↻ Repeat off';$('repeat').classList.toggle('on',loop);};
+$('pause').onclick=()=>{if(!playing){if(range&&playbackPosition()<range.to-0.05){playing=true;audio.play().then(tick).catch(()=>{});$('pause').textContent=t('pause');}else play(...selectionBounds());}else{playing=false;audio.pause();$('pause').textContent=t('resume');}};
+$('repeat').onclick=()=>{loop=!loop;if(clipUrl)audio.loop=loop;$('repeat').textContent=t(loop?'repeatOn':'repeatOff');$('repeat').classList.toggle('on',loop);};
 $('speed').onchange=e=>audio.playbackRate=Number(e.target.value);
 $('seek').oninput=e=>{if(clipUrl){stop();useFullRecording();}audio.currentTime=PHRASES[phrase].duration*e.target.value/1000;updateProgress();};
-audio.addEventListener('ended',()=>{playing=false;$('pause').textContent='▶ Resume';updateProgress();});
-function renderEditor(){const root=$('timingRows');root.replaceChildren();words(phrase).forEach((word,i)=>{const tr=document.createElement('tr');const name=document.createElement('td');name.textContent=word;tr.append(name);[0,1].forEach(j=>{const td=document.createElement('td'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=PHRASES[phrase].duration;inp.step='0.01';inp.value=Number(times[phrase][i][j]).toFixed(2);inp.setAttribute('aria-label',`${word} ${j===0?'start':'end'} in seconds`);inp.onchange=()=>{if(!setWordBoundary(i,j,Number(inp.value)))inp.value=Number(times[phrase][i][j]).toFixed(2);};td.append(inp);tr.append(td);});const td=document.createElement('td'),b=document.createElement('button');b.className='btn small';b.textContent='▶';b.setAttribute('aria-label',`Play ${word}`);b.onclick=()=>{chosen=[i,i];paint();play(...selectionBounds());};td.append(b);tr.append(td);root.append(tr);});renderWaveRegions();}
-$('toggleEditor').onclick=()=>{const hidden=$('editorArea').classList.toggle('hidden');$('toggleEditor').textContent=hidden?'Show editor':'Hide editor';$('toggleEditor').setAttribute('aria-expanded',String(!hidden));if(!hidden){resizeWaveform();loadWaveform();}};
-$('resetTimings').onclick=()=>{if(confirm('Reset to the timings saved in this HTML for this phrase?')){times[phrase]=normalizeTimings(TIMINGS)[phrase].map(row=>row.slice());persist();renderEditor();}};
-$('exportTimings').onclick=async()=>{const value=JSON.stringify(times,null,2);try{await navigator.clipboard.writeText(value);alert('Copied timings JSON.');}catch{prompt('Copy timings JSON:',value);}};
-$('importTimings').onclick=()=>{const raw=prompt('Paste timing arrays for the selected dictation as JSON:');if(!raw)return;try{const data=normalizeTimings(JSON.parse(raw));if(!data)throw Error('Incorrect array shape');times=data;persist();renderEditor();paint();}catch(e){alert('Invalid timings: '+e.message);}};
+audio.addEventListener('ended',()=>{playing=false;$('pause').textContent=t('resume');updateProgress();});
+function renderEditor(){const root=$('timingRows');root.replaceChildren();words(phrase).forEach((word,i)=>{const tr=document.createElement('tr');const name=document.createElement('td');name.textContent=word;name.lang='ca';tr.append(name);[0,1].forEach(j=>{const td=document.createElement('td'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=PHRASES[phrase].duration;inp.step='0.01';inp.value=Number(times[phrase][i][j]).toFixed(2);inp.setAttribute('aria-label',t(j===0?'wordStartSeconds':'wordEndSeconds',{word}));inp.onchange=()=>{if(!setWordBoundary(i,j,Number(inp.value)))inp.value=Number(times[phrase][i][j]).toFixed(2);};td.append(inp);tr.append(td);});const td=document.createElement('td'),b=document.createElement('button');b.className='btn small';b.textContent='▶';b.setAttribute('aria-label',t('playWord',{word}));b.onclick=()=>{chosen=[i,i];paint();play(...selectionBounds());};td.append(b);tr.append(td);root.append(tr);});renderWaveRegions();}
+$('toggleEditor').onclick=()=>{const hidden=$('editorArea').classList.toggle('hidden');$('toggleEditor').textContent=t(hidden?'show':'hide');$('toggleEditor').setAttribute('aria-expanded',String(!hidden));if(!hidden){resizeWaveform();loadWaveform();}};
+$('resetTimings').onclick=()=>{if(confirm(t('confirmReset'))){times[phrase]=normalizeTimings(TIMINGS)[phrase].map(row=>row.slice());persist();renderEditor();}};
+$('exportTimings').onclick=async()=>{const value=JSON.stringify(times,null,2);try{await navigator.clipboard.writeText(value);alert(t('copied'));}catch{prompt(t('copyPrompt'),value);}};
+$('importTimings').onclick=()=>{const raw=prompt(t('paste'));if(!raw)return;try{const data=normalizeTimings(JSON.parse(raw));if(!data)throw Error('Incorrect array shape');times=data;persist();renderEditor();paint();}catch(e){alert(t('invalid'));}};
 document.addEventListener('keydown',e=>{if(e.defaultPrevented||['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||e.altKey||e.ctrlKey||e.metaKey)return;if(e.code==='Space'){e.preventDefault();$('pause').click();}else if(e.key==='Enter'){e.preventDefault();$('playSelection').click();}else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();const next=Math.max(0,Math.min(words(phrase).length-1,chosen[0]+(e.key==='ArrowRight'?1:-1)));chosen=[next,next];paint();}});
 function setDictation(id){
  const next=DICTATIONS.find(d=>d.id===id)||DICTATIONS[1];
@@ -785,13 +786,28 @@ function setDictation(id){
  try{const stored=normalizeTimings(JSON.parse(localStorage.getItem(next.storageKey)));if(stored)times=stored;localStorage.setItem('dictat-selected-v1',next.id);}catch{}
  $('dictationSelect').value=next.id;
  $('dictationTitle').textContent=next.title;
- document.title=next.title+' · Parent audio player';
+ document.title=next.title+' · '+t('player');
  setPhrase(0);
 }
 DICTATIONS.forEach(d=>{const option=document.createElement('option');option.value=d.id;option.textContent=d.title;$('dictationSelect').append(option);});
 $('dictationSelect').onchange=e=>setDictation(e.target.value);
 let selectedDictation='la-castanyada';
 try{selectedDictation=localStorage.getItem('dictat-selected-v1')||selectedDictation;}catch{}
+$('language').value=language;
+$('language').onchange=e=>{
+ language=e.target.value;
+ try{localStorage.setItem('dictat-ui-language',language);}catch{}
+ translatePage();
+ document.title=dictation.title+' · '+t('player');
+ $('pause').textContent=t(playing?'pause':'resume');
+ $('repeat').textContent=t(loop?'repeatOn':'repeatOff');
+ $('toggleEditor').textContent=t($('editorArea').classList.contains('hidden')?'show':'hide');
+ updateRangeHint();
+ render();
+};
+translatePage();
+$('repeat').textContent=t('repeatOff');
+$('toggleEditor').textContent=t('show');
 initWaveform();
 setDictation(selectedDictation);
 </script></body></html>

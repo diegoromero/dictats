@@ -13,11 +13,17 @@ async function waveformAudioBytes(source){
  return response.arrayBuffer();
 }
 
+function setWaveStatus(key){
+ const el=$('waveStatus');
+ el.dataset.i18n=key;
+ el.textContent=t(key);
+}
+
 async function loadWaveform(){
  const request=++waveRequest, source=PHRASES[phrase].audio;
  if(source!==waveSource){wavePeaks=null;waveSource=source;$('waveScroll').scrollLeft=0;}
  if($('editorArea').classList.contains('hidden'))return;
- $('waveStatus').textContent='Loading audio waveform…';
+ setWaveStatus('loading');
  drawWaveform();
  try{
   if(!waveCache.has(source)){
@@ -45,11 +51,11 @@ async function loadWaveform(){
   const peaks=await waveCache.get(source);
   if(request!==waveRequest)return;
   wavePeaks=peaks;
-  $('waveStatus').textContent='Waveform ready · timing changes save automatically in this browser.';
+  setWaveStatus('ready');
   resizeWaveform();
  }catch(error){
   if(request!==waveRequest)return;
-  $('waveStatus').textContent='Waveform unavailable. Try reopening the page in a browser that supports Ogg audio decoding. You can still edit word times below.';
+  setWaveStatus('unavailable');
  }
 }
 
@@ -94,7 +100,7 @@ function renderWaveRegions(){
  words(phrase).forEach((word,i)=>{
   const region=document.createElement('div');region.className='wave-region';
   const label=document.createElement('button');label.className='wave-label';label.textContent=word;
-  label.title=`Select ${word}`;label.setAttribute('aria-label',`Edit timing for ${word}`);
+  label.title=t('selectWord',{word});label.setAttribute('aria-label',t('editWord',{word}));
   // Alternate label rows so short adjacent words stay easy to select.
   label.style.top=(i%2?190:163)+'px';
   label.onclick=()=>{chosen=[i,i];rangeAnchor=null;updateRangeHint();paint();};
@@ -118,11 +124,11 @@ function syncWaveform(){
  [$('waveStart'),$('waveEnd')].forEach((handle,boundary)=>{
   const value=boundary===0?start:end;
   handle.style.left=percent(value);
-  handle.setAttribute('aria-label',`${word} ${boundary===0?'start':'end'}`);
+  handle.setAttribute('aria-label',t(boundary===0?'wordStart':'wordEnd',{word}));
   handle.setAttribute('aria-valuenow',value.toFixed(2));
   handle.setAttribute('aria-valuemin',boundary===0?'0':(start+0.01).toFixed(2));
   handle.setAttribute('aria-valuemax',(boundary===0?end-0.01:duration).toFixed(2));
-  handle.setAttribute('aria-valuetext',value.toFixed(2)+' seconds');
+  handle.setAttribute('aria-valuetext',t('seconds',{n:value.toFixed(2)}));
  });
  $('waveSelection').textContent=`${word} · ${start.toFixed(2)}–${end.toFixed(2)} s`;
  $('wavePlayhead').style.left=percent(playbackPosition());
